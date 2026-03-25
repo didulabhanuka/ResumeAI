@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { apiLimiter, authLimiter } = require('./middleware/rateLimit/rateLimit.middleware');
 
 dotenv.config();
 
@@ -24,9 +25,9 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV });
 });
 
-// TODO: app.use('/api', apiLimiter);
-// TODO: app.use('/api/auth', authLimiter);
-// TODO: app.use('/api', require('./routes/index'));
+app.use('/api', apiLimiter);
+app.use('/api/auth', authLimiter);
+app.use('/api', require('./routes/index'));
 
 // 404 — route not found
 app.use((req, res) => {
