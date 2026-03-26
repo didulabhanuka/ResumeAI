@@ -6,11 +6,13 @@ const { generatePdf } = require('../../services/pdf/pdfExport.service');
 // POST /api/cover-letter/generate
 const generate = async (req, res, next) => {
   try {
-   const { jobDescription } = req.body;
+    const { jobDescription, jobTitle, companyName } = req.body;
+
     // Parse settings — sent as JSON string in FormData
     const settings = typeof req.body.settings === 'string'
-    ? JSON.parse(req.body.settings)
-    : req.body.settings;
+      ? JSON.parse(req.body.settings)
+      : req.body.settings;
+
     let resumeText = req.body.resumeText;
 
     if (req.file) {
@@ -38,6 +40,7 @@ const generate = async (req, res, next) => {
       customNote: settings?.customNote || '',
     };
 
+    // Set SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -58,11 +61,14 @@ const generate = async (req, res, next) => {
     res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
     res.end();
 
+    // Save to DB with job title and company name
     await CoverLetter.create({
       userId: req.user._id,
       jobDescription,
       resumeText,
       generatedLetter: fullText,
+      jobTitle: jobTitle?.trim() || 'Untitled Position',
+      companyName: companyName?.trim() || 'Unknown Company',
       tone: parsedSettings.tone,
       length: parsedSettings.length,
       focus: parsedSettings.focus,
@@ -94,7 +100,6 @@ const download = async (req, res, next) => {
       });
     }
 
-    // Generate PDF from stored letter text
     const pdfBytes = await generatePdf(letter.generatedLetter, req.user.name);
 
     res.setHeader('Content-Type', 'application/pdf');

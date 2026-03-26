@@ -7,7 +7,7 @@ export const useCoverLetter = () => {
   const [error, setError] = useState('');
   const abortRef = useRef(null);
 
-  const generate = async ({ jobDescription, resumeText, resumeFile, settings }) => {
+  const generate = async ({ jobTitle, companyName, jobDescription, resumeText, resumeFile, settings }) => {
     setText('');
     setStreaming(true);
     setDone(false);
@@ -21,6 +21,8 @@ export const useCoverLetter = () => {
 
       // Build form data — supports both text and file
       const formData = new FormData();
+      formData.append('jobTitle', jobTitle || '');
+      formData.append('companyName', companyName || '');
       formData.append('jobDescription', jobDescription);
       formData.append('settings', JSON.stringify(settings));
 

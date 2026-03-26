@@ -11,6 +11,8 @@ const defaultSettings = {
 };
 
 export default function CoverLetterForm({ onSubmit, onAbort, streaming }) {
+  const [jobTitle, setJobTitle] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [resumeText, setResumeText] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
@@ -18,11 +20,39 @@ export default function CoverLetterForm({ onSubmit, onAbort, streaming }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ jobDescription, resumeText, resumeFile, settings });
+    onSubmit({ jobTitle, companyName, jobDescription, resumeText, resumeFile, settings });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+
+      {/* Job Title + Company */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Job Title
+          </label>
+          <input
+            type="text"
+            value={jobTitle}
+            onChange={(e) => setJobTitle(e.target.value)}
+            placeholder="e.g. Senior Node.js Developer"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Company Name
+          </label>
+          <input
+            type="text"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            placeholder="e.g. Tech Corp"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
 
       {/* Job Description */}
       <div>
