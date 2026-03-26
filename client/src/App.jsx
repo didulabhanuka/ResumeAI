@@ -1,12 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import Navbar from './components/Shared/Navbar';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ScreenerPage from './pages/ScreenerPage';
 import CoverLetterPage from './pages/CoverLetterPage';
 import HistoryPage from './pages/HistoryPage';
 
-// Protect routes — redirect to login if not authenticated
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return (
@@ -17,6 +17,16 @@ const ProtectedRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" replace />;
 };
 
+// Layout with Navbar for protected pages
+const ProtectedLayout = ({ children }) => (
+  <div className="min-h-screen bg-gray-50">
+    <Navbar />
+    <main className="max-w-6xl mx-auto px-6 py-8">
+      {children}
+    </main>
+  </div>
+);
+
 export default function App() {
   return (
     <Routes>
@@ -26,13 +36,19 @@ export default function App() {
 
       {/* Protected routes */}
       <Route path="/screener" element={
-        <ProtectedRoute><ScreenerPage /></ProtectedRoute>
+        <ProtectedRoute>
+          <ProtectedLayout><ScreenerPage /></ProtectedLayout>
+        </ProtectedRoute>
       } />
       <Route path="/cover-letter" element={
-        <ProtectedRoute><CoverLetterPage /></ProtectedRoute>
+        <ProtectedRoute>
+          <ProtectedLayout><CoverLetterPage /></ProtectedLayout>
+        </ProtectedRoute>
       } />
       <Route path="/history" element={
-        <ProtectedRoute><HistoryPage /></ProtectedRoute>
+        <ProtectedRoute>
+          <ProtectedLayout><HistoryPage /></ProtectedLayout>
+        </ProtectedRoute>
       } />
 
       {/* Default redirect */}
